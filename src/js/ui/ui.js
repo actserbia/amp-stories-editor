@@ -23,7 +23,7 @@ module.exports = function( ) {
                     toolForEdit:"editText",
                     text:'Dummy Title',
                     css:{
-                        color:"#ffffff;",
+                        color:"#ff0000",
                         font:"Impact",
                         size:"32",
                         weight:'400'
@@ -34,7 +34,7 @@ module.exports = function( ) {
                     toolForEdit:"editText",
                     text:'Dummy Description text, type here your content.',
                     css:{
-                        color:"#ffffff;",
+                        color:"#ffffff",
                         font:"Helvetica",
                         size:"24",
                         weight:'400',
@@ -78,11 +78,13 @@ module.exports = function( ) {
                 </div>
                 <div class="c-canvas__title dragableText" data-page="page${page.id}" data-name="title">
                     <h1
+                    class="title"
                     style="${generateInlineCss(titleCss)}"
                     >${page.title.text}</h1>
                 </div>
                 <div class="c-canvas__description dragableText" data-page="page${page.id}" data-name="description">
                     <p
+                    class="description"
                     style="${generateInlineCss(descriptionCss)}"
                     >${page.description.text}</p>
                 </div>
@@ -109,6 +111,20 @@ module.exports = function( ) {
         }
     }
 
+    function getPickedColor(){
+        let colorPicker = $(".b-ui__tool__edit-text__item.color input");
+        if( colorPicker ){
+            return colorPicker.val();
+        }
+    }
+
+    function handleTextColorChange(){
+        let color = getPickedColor();
+        //updateEditTextHTML();
+        //updateStylesInCanvas();
+    }
+
+
     function hideActiveTool(){
         toolsList.find(".active").removeClass("active");
     }
@@ -116,6 +132,12 @@ module.exports = function( ) {
     function showSelectedEditTool( ){
         let self = $(this),
             toolToActivate  = $(`.b-ui__tool__${self.attr("data-toolClass")}`);
+
+            if(!self.hasClass('selected')){
+                $('.b-ui__menu .c-ui-btn.selected').removeClass("selected");
+                //add white color on icon
+                self.addClass("selected");
+            }
             //if tool is not active
             if( !toolToActivate.hasClass('active') ){
                 //hide current active tool
@@ -129,11 +151,65 @@ module.exports = function( ) {
         let data = payload.data;
         state.tools[data.toolForEdit].pageName = payload.pageName;
         state.tools[data.toolForEdit].propName = payload.propName;
+        console.log('STATE UPDATED');
+        console.log(state.tools[data.toolForEdit]);
+    }
 
+    function updateTextColor( color ){
+        //updatae Data
+        let pageName = state.tools.editText.pageName,
+            propName = state.tools.editText.propName,
+            itemToChangeColor  = $(`#${pageName} .${propName}`);
+        itemToChangeColor.css( {color:color} );
+
+        //set color in global data obj
+        data.pages[pageName][propName].css.color = color;
+        console.log(data.pages);
+    }
+
+    function generateEditTxtHTML( payload ){
+        let css = payload.data.css;
+        $('.b-ui__tool .b-ui__tool__edit-text__inner')
+        .empty()
+        .append(
+            //USE LETER INSIDE
+            //${css.weight}
+            `
+              <div class="b-ui__tool__edit-text__item family">
+                  <span class='icon'>Aa</span><span class='text'>${css.font}</span>
+              </div>
+              <div class="b-ui__tool__edit-text__item size">
+                  <span class='icon'><span>48</span></span><span class='text'>${css.size}</span>
+              </div>
+              <div class="b-ui__tool__edit-text__item color">
+                  <span class='icon'>
+                      <input type="color" name="favcolor" value="${css.color}">
+                  </span>
+                  <span class='text'>${css.color}</span>
+              </div>
+              <div class="b-ui__tool__edit-text__item label">
+                  <textarea rows="10" cols="40">${payload.data.text}</textarea>
+              </div>
+              <div class="b-ui__tool__edit-text__item-switches">
+                  <label class="c-switch">
+                    <input type="checkbox">
+                    <span class="slider round"></span>
+                    <span class='c-switch__title'>Regular</span>
+                  </label>
+              </div>
+            `
+        );
+        let colorPicker = $(".b-ui__tool__edit-text__item.color input");
+        colorPicker.on('change', function(){
+            let color = getPickedColor();
+            updateTextColor(color);
+            $('.b-ui__tool__edit-text__item.color .text').text(color);
+        })
     }
 
     function generateAndShowEditTextTool( payload ){
         console.log('text tool called');
+        console.log(payload);
         let css = payload.data.css,
             toolState = state.tools.editText,
             textTool = $(".b-ui__tool__edit-text");
@@ -147,28 +223,14 @@ module.exports = function( ) {
             }else{
                 //if interact element is not on display
                 setToolState(payload);
-                generateEditTxtHtml();
+                generateEditTxtHTML( payload );
             }
         }else{
             hideActiveTool();
             setToolState(payload);
-            generateEditTxtHtml();
+            generateEditTxtHTML( payload );
             textTool.addClass('active');
             //fill with settings for draged text
-        }
-
-        function generateEditTxtHtml(){
-            //local function to generate inner html of editText Tool
-            $('.b-ui__tool .b-ui__tool__edit-text__inner')
-            .empty()
-            .append(
-                ` <p>Title:${payload.data.text}</p>
-                  <p>Color:${css.color}</p>
-                  <p>Font-family:${css.font}</p>
-                  <p>Font-Size:${css.size}</p>
-                  <p>Font-Weight:${css.weight}</p>
-                `
-            )
         }
     }
 
@@ -178,7 +240,9 @@ module.exports = function( ) {
              propName  = target.getAttribute("data-name"),
              payload   = { data:data.pages[pageName][propName], pageName, propName };
          console.log(payload);
+         console.log(getPickedColor());
          generateAndShowEditTextTool( payload )
+         console.log(state);
     }
 
     function dragTextMoveListener (event) {

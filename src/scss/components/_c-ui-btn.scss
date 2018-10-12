@@ -1,22 +1,47 @@
 .c-ui-btn{
-    width: 8rem;
-    height: 8rem;
+    width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 0.5rem;
-    background: #747d8c;
+    margin-bottom: 4.2rem;
+    background: transparent;
     transition: all 0.3s ease;
-    &__title{
-        @include font-size(20,24);
-        color: white;
+
+    &__inner{
+        width: 2.4rem;
     }
+
+    & .svg{
+        fill:#2f3545;
+        transition: all 0.25s ease;
+    }
+
     &:hover{
         @include breakpoint(overPhone){
             cursor: pointer;
-            background: #57606f;
+            .svg{
+                fill:white;
+            }
         }
     }
+
+    &.selected{
+
+        & .svg{
+            fill:white;
+            transition: all 0.25s ease;
+        }
+
+        &:hover{
+            @include breakpoint(overPhone){
+                cursor: pointer;
+                .svg{
+                    fill:rgba(255,255,255,0.5);
+                }
+            }
+        }
+    }
+
     &--last{
         margin-bottom:0;
     }
