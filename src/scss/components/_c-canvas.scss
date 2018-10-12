@@ -1,0 +1,50 @@
+.c-canvas{
+    position:relative;
+    background:#b7b7b7;
+    width: 36rem;
+    height: 64rem;
+    box-shadow: 6px 7px 9px -1px rgba(0,0,0,0.2);
+    overflow: hidden;
+    border-radius: 18px;
+    &--side{
+        width: 32.4rem;
+        height: 57.6rem;
+        background: transparent;
+        opacity: 0.6;
+        position: absolute;
+        z-index: 3;
+    }
+    &--left{
+        left: 2rem;
+    }
+    &--center{
+        margin: auto;
+        z-index: 5;
+    }
+    &--right{
+        right: 2rem;
+    }
+
+
+    &__title{
+        position: absolute;
+        top:20px;
+        left:50px;
+        color: white;
+
+        h1{
+            @include font-size(20,32);
+        }
+    }
+
+    &__description{
+        position: absolute;
+        bottom:50px;
+        left:50px;
+        color: white;
+
+        p{
+            @include font-size(20,32);
+        }
+    }
+}

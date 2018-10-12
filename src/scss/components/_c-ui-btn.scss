@@ -1,0 +1,23 @@
+.c-ui-btn{
+    width: 8rem;
+    height: 8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.5rem;
+    background: #747d8c;
+    transition: all 0.3s ease;
+    &__title{
+        @include font-size(20,24);
+        color: white;
+    }
+    &:hover{
+        @include breakpoint(overPhone){
+            cursor: pointer;
+            background: #57606f;
+        }
+    }
+    &--last{
+        margin-bottom:0;
+    }
+}
