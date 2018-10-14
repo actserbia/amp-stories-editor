@@ -19,9 +19,11 @@ module.exports = function( ) {
                     src:"img/placeholder.jpg",
                 },
 
+                //item on canvas
                 title:{
-                    toolForEdit:"editText",
-                    text:'Dummy Title',
+                    toolForEdit:"editText", //tool used to edit this item
+                    text:'Dummy Title', //label - text of item
+                    //css of item
                     css:{
                         color:"#ff0000",
                         font:"Impact",
@@ -52,6 +54,7 @@ module.exports = function( ) {
         backgroundThumbs     = ui.find(".b-ui__tool__edit-bcg__item");
 
     //states
+    //manage state of local app
     let state = {
         tools:{
             edtiBcg:{
@@ -65,12 +68,15 @@ module.exports = function( ) {
             }
         }
     };
+
     //FUNCTION DEFINITIONS
+    //called on inital load
     function init(){
         let page = data.pages.page1,
             titleCss = page.title.css,
             descriptionCss = page.description.css;
 
+        //finds canvas - phone  and creates interacive html
         ui.find(".c-canvas--center").append(
             ` <div class="" id='page${page.id}'>
                 <div class="c-canvas__bcg-img">
@@ -89,10 +95,15 @@ module.exports = function( ) {
                     >${page.description.text}</p>
                 </div>
             </div>`
-        )
+          );
+            let dragableItem = $('.dragableText');
+            dragableItem.click(clickTextOnCanvassListener);
+
     }
 
     function generateInlineCss( obj ){
+      //@obj - data.pages.page1.title.css
+      //pass css obj and generate string of inline params
         return ( `color:${obj.color};
          font-family:${obj.font};
          font-size:${obj.size}px;
@@ -100,6 +111,7 @@ module.exports = function( ) {
     }
 
     function handleChangeBackgroundImage(){
+      //when user selecets image appay it to canvas
         let self = $(this);
 
         if( !self.hasClass('selected') ) {
@@ -112,6 +124,7 @@ module.exports = function( ) {
     }
 
     function getPickedColor(){
+      //returns color selected in color picker
         let colorPicker = $(".b-ui__tool__edit-text__item.color input");
         if( colorPicker ){
             return colorPicker.val();
@@ -126,10 +139,12 @@ module.exports = function( ) {
 
 
     function hideActiveTool(){
+      //hides currently active tool in TOOLS panel
         toolsList.find(".active").removeClass("active");
     }
 
     function showSelectedEditTool( ){
+      //triger when clicking on tools icons
         let self = $(this),
             toolToActivate  = $(`.b-ui__tool__${self.attr("data-toolClass")}`);
 
@@ -148,6 +163,8 @@ module.exports = function( ) {
     }
 
     function setToolState(payload){
+      // payload model
+      // payload   = { data:data.pages[pageName][propName], pageName, propName };
         let data = payload.data;
         state.tools[data.toolForEdit].pageName = payload.pageName;
         state.tools[data.toolForEdit].propName = payload.propName;
@@ -156,7 +173,7 @@ module.exports = function( ) {
     }
 
     function updateTextColor( color ){
-        //updatae Data
+        //updatae Color of selected text
         let pageName = state.tools.editText.pageName,
             propName = state.tools.editText.propName,
             itemToChangeColor  = $(`#${pageName} .${propName}`);
@@ -164,7 +181,64 @@ module.exports = function( ) {
 
         //set color in global data obj
         data.pages[pageName][propName].css.color = color;
-        console.log(data.pages);
+        console.log("New color is " +   data.pages[pageName][propName].css.color );
+    }
+
+    function updateFontSize( event ){
+    //Update font size with arrows and by typeing
+      console.log('FontSize update');
+        let pageName = state.tools.editText.pageName,
+            propName = state.tools.editText.propName,
+            itemToChangeFontSIze  = $(`#${pageName} .${propName}`),
+            input                 = $('.b-ui__tool__edit-text__item.size input'),
+            newFontSize;
+
+        //up-arrow (regular and num-pad)
+        if (event.which == 38 || event.which == 104) {
+            //make sure to use `parseInt()` so you can numerically add to the value rather than concocting a longer string
+            input.val((parseInt(input.val()) + 1));
+            newFontSize =  input.val();
+
+            //set new values
+            itemToChangeFontSIze.css( {'fontSize': `${newFontSize}px`} );
+            //set fontsize in global data obj
+            data.pages[pageName][propName].css.size = newFontSize;
+            console.log("New font size is: " +   data.pages[pageName][propName].css.size );
+        //down-arrow (regular and num-pad)
+        } else if (event.which == 40 || event.which == 98) {
+            input.val((parseInt(input.val()) - 1));
+            newFontSize =  input.val();
+            itemToChangeFontSIze.css( {'fontSize': `${newFontSize}px`} );
+            //set fontsize in global data obj
+            data.pages[pageName][propName].css.size = newFontSize;
+            console.log("New font size is: " +   data.pages[pageName][propName].css.size );
+        //Enter key
+        }else if(event.which == 13) {
+          input.val((parseInt(input.val()) - 1));
+          newFontSize =  input.val();
+          itemToChangeFontSIze.css( {'fontSize': `${newFontSize}px`} );
+          //set fontsize in global data obj
+          data.pages[pageName][propName].css.size = newFontSize;
+          console.log("New font size is: " +   data.pages[pageName][propName].css.size );
+       }
+
+    }
+
+    function updateTextLabel( event ){
+      //update text
+      console.log('Text update');
+        let pageName = state.tools.editText.pageName,
+            propName = state.tools.editText.propName,
+            itemToChangeText      = $(`#${pageName} .${propName}`),
+            textArea              = $('.b-ui__tool__edit-text__item.label textarea');
+
+            console.log(textArea.val());
+
+            //set new values
+            itemToChangeText.text(textArea.val());
+            //set new text value in global data obj
+            data.pages[pageName][propName].text = textArea.val();
+            console.log("New Text is: " +   data.pages[pageName][propName].text );
     }
 
     function generateEditTxtHTML( payload ){
@@ -172,14 +246,15 @@ module.exports = function( ) {
         $('.b-ui__tool .b-ui__tool__edit-text__inner')
         .empty()
         .append(
-            //USE LETER INSIDE
+            //USE LATER INSIDE to set font weight
             //${css.weight}
             `
               <div class="b-ui__tool__edit-text__item family">
                   <span class='icon'>Aa</span><span class='text'>${css.font}</span>
               </div>
               <div class="b-ui__tool__edit-text__item size">
-                  <span class='icon'><span>48</span></span><span class='text'>${css.size}</span>
+                  <input class='font-size' type="text" value="${css.size}">
+                  <span class='text'>Font Size</span>
               </div>
               <div class="b-ui__tool__edit-text__item color">
                   <span class='icon'>
@@ -199,24 +274,46 @@ module.exports = function( ) {
               </div>
             `
         );
-        let colorPicker = $(".b-ui__tool__edit-text__item.color input");
+        let colorPicker = $(".b-ui__tool__edit-text__item.color input"),
+            fontSize    = $(".b-ui__tool__edit-text__item.size input"),
+            label       = $(".b-ui__tool__edit-text__item.label textarea")
         colorPicker.on('change', function(){
             let color = getPickedColor();
             updateTextColor(color);
             $('.b-ui__tool__edit-text__item.color .text').text(color);
         })
+
+        fontSize.on('keyup', updateFontSize);
+        label.on('keyup', updateTextLabel);
+    }
+
+    function getJSON(){
+      //get JSON from GLOBAL data obj
+      console.log(JSON.stringify(data))
+    }
+
+    function isTextInEditMode( payload ){
+      //check if
+      //element interacted with on canvas is already displayed in edit Tools box
+      let toolState = state.tools.editText,
+          textTool = $(".b-ui__tool__edit-text");
+        if( toolState.pageName == payload.pageName && toolState.propName == payload.propName ){
+          return true
+        }
+        return false
     }
 
     function generateAndShowEditTextTool( payload ){
+      // payload model
+      // payload   = { data:data.pages[pageName][propName], pageName, propName };
         console.log('text tool called');
         console.log(payload);
-        let css = payload.data.css,
-            toolState = state.tools.editText,
+        let toolState = state.tools.editText,
             textTool = $(".b-ui__tool__edit-text");
 
         if( textTool.hasClass('active') ){
             //if text tool is active in tools panel
-            if( toolState.pageName == payload.pageName && toolState.propName == payload.propName ){
+            if(  isTextInEditMode( payload ) ){
                 //if interacted text is displayed in tools panel
                 console.log('ALREADY ACTIVE - RETURN');
                 return
@@ -234,15 +331,54 @@ module.exports = function( ) {
         }
     }
 
+    function selectItem( item ){
+      //display styles( border box ) on selecetd item on canvas
+      if( !item.hasClass('selected')){
+        //if item is not selecetd
+        $('.c-canvas--center').find('.dragableText.selected')
+        .removeClass('selected');
+        item.addClass('selected');
+      }else{
+        //if item is selecetd
+      }
+    }
+
     function dragTextStartListener (event) {
+      //when text drag on canvas STARTS
          let target    = event.target,
              pageName  = target.getAttribute("data-page"),
              propName  = target.getAttribute("data-name"),
              payload   = { data:data.pages[pageName][propName], pageName, propName };
-         console.log(payload);
-         console.log(getPickedColor());
-         generateAndShowEditTextTool( payload )
-         console.log(state);
+
+        console.log(target.classList[0]);
+         generateAndShowEditTextTool( payload );
+         selectItem($('.'+target.classList[0]));
+
+         //match icon in tools menu with draged element
+         if(!$(".c-ui-btn--edit-text").hasClass('selected')){
+             $('.b-ui__menu .c-ui-btn.selected').removeClass("selected");
+             //add white color on icon
+             $(".c-ui-btn--edit-text").addClass("selected");
+         }
+
+    }
+    function clickTextOnCanvassListener (event) {
+      //when user click text on canvas
+         //let target    = event.target;
+         let target   = $(this),
+             pageName  = target.attr("data-page"),
+             propName  = target.attr("data-name"),
+             payload   = { data:data.pages[pageName][propName], pageName, propName };
+         if( !isTextInEditMode( payload ) ){
+           generateAndShowEditTextTool( payload );
+           selectItem( target );
+           //match icon in tools menu with draged element
+           if(!$(".c-ui-btn--edit-text").hasClass('selected')){
+               $('.b-ui__menu .c-ui-btn.selected').removeClass("selected");
+               //add white color on icon
+               $(".c-ui-btn--edit-text").addClass("selected");
+           }
+         }
     }
 
     function dragTextMoveListener (event) {
@@ -266,6 +402,7 @@ module.exports = function( ) {
     init();
     backgroundThumbs.click( handleChangeBackgroundImage );
     uiBtns.click( showSelectedEditTool );
+    $('.get-json').click(getJSON);
 
     interact('.dragableText')
     .draggable({

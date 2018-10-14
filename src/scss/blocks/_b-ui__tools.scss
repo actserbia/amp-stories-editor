@@ -35,13 +35,20 @@
             opacity: 0;
             transform: translateX(-100%);
             transition: transform 0.3s ease;
+            &__title{
+                @include font-size(22,22);
+                color: #f8f8f8;
+                font-family: $ff-main-medium;
+                margin-bottom: 5.1rem;
+                padding-left: 1.6rem;
+            }
 
             &__images-list{
                 //margin-top: 24.8rem;
                 background-color: #1f2534;
                 width: 100%;
                 //max-height: 80rem;
-                height: 80rem;
+                //height: 80rem;
                 //overflow-y: scroll;
                 padding: 2rem 1.6rem;
             }
@@ -123,16 +130,19 @@
 
                 }
                 &.size{
+                 & input{
+                    @include font-size(18,18);
+                    width: 5rem;
+                    border: 1px solid #626a7b;
+                    padding: 0.5rem 1.3rem;
+                    margin-right: 1.7rem;
+                    background: transparent;
+                    display: inline-block;
+                    color: #626a7b;
+                    text-align: center;
+                  }
                     span{
-                        display: inline-block;
-                        &.icon{
-                            @include font-size(18,18);
-                            width: 7rem;
-                            span{
-                                border: 1px solid #626a7b;
-                                padding: 0.5rem 1.4rem;
-                            }
-                        }
+                      display: inline-block;
                         &.text{
 
                         }
