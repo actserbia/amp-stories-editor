@@ -1,13 +1,18 @@
 var $ = require('jquery');
 //var interact = require('interactjs');
+var GS = require('./partials/globalSettings.js');
 
 /*MODULE EXPORT*/
 module.exports = function( ) {
+    console.log(GS);
+    GS.generateGlobalSettings();
     var data = {
         stroy:{
             pagesCount:1,
-            title:'',
-            publisher:''
+            title:'AMP story builder',
+            publisher:'Diwnaee Serbia',
+            publisherLogoSrc:'src/logo.jpg',
+            posterPortraitSrc:'src/posterPortrait.jpg'
         },
 
         pages:{
@@ -214,7 +219,7 @@ module.exports = function( ) {
             console.log("New font size is: " +   data.pages[pageName][propName].css.size );
         //Enter key
         }else if(event.which == 13) {
-          input.val((parseInt(input.val()) - 1));
+          input.val((parseInt(input.val())));
           newFontSize =  input.val();
           itemToChangeFontSIze.css( {'fontSize': `${newFontSize}px`} );
           //set fontsize in global data obj
@@ -263,7 +268,7 @@ module.exports = function( ) {
                   <span class='text'>${css.color}</span>
               </div>
               <div class="b-ui__tool__edit-text__item label">
-                  <textarea rows="10" cols="40">${payload.data.text}</textarea>
+                  <textarea rows="10">${payload.data.text}</textarea>
               </div>
               <div class="b-ui__tool__edit-text__item-switches">
                   <label class="c-switch">
