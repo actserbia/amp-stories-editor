@@ -1,0 +1,30 @@
+.c-btn{
+    padding: 1.2rem 3rem;
+    border: 1px solid #3f4656;
+    border-radius: 5px;
+    background-color: #1f2534;
+    color: #f8f8f8;
+    @include font-size(13,13);
+    text-transform: uppercase;
+    font-family: $ff-main-medium;
+    outline: none;
+    margin-right: .6rem;
+
+    &:hover{
+        @include breakpoint(desktop){
+            cursor: pointer;
+            opacity: 0.7;
+        }
+    }
+
+    &--disabled{
+        pointer-events: none;
+        color: #2f3545;
+        &:hover{
+            @include breakpoint(desktop){
+                cursor: not-allowed;
+            }
+        }
+
+    }
+}

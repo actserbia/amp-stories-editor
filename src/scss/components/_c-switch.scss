@@ -4,7 +4,7 @@
   display: block;
   width: 2.66rem;
   height: 1.44rem;
-  margin-bottom: 0.5rem; 
+  margin-bottom: 0.5rem;
 
   &__title{
       left: 4.6rem;
@@ -19,6 +19,7 @@
       display:none;
       &:checked + .slider {
         background-color: #5628ee;
+        border: solid 1px #5628ee;
       }
 
       &:focus + .slider {
@@ -27,6 +28,7 @@
 
       &:checked + .slider:before {
         transform: translateX(1.2rem);
+        background-color: white;
       }
   }
 
@@ -38,7 +40,8 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #ccc;
+    background-color: #1b212f;
+    border: solid 1px #3f4656;
     transition: .4s;
 
     &:before {
@@ -46,9 +49,9 @@
       content: "";
       height: 1.5rem;
       width: 1.5rem;
-      left: 0;
-      bottom: 0;
-      background-color: white;
+      left: -1px;
+      bottom: -1px;
+      background-color: #2f3545;
       transition: .4s;
     }
 

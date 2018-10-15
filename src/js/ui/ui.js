@@ -4,10 +4,9 @@ var GS = require('./partials/globalSettings.js');
 
 /*MODULE EXPORT*/
 module.exports = function( ) {
-    console.log(GS);
-    GS.generateGlobalSettings();
+
     var data = {
-        stroy:{
+        story:{
             pagesCount:1,
             title:'AMP story builder',
             publisher:'Diwnaee Serbia',
@@ -51,7 +50,8 @@ module.exports = function( ) {
         }
     };
     //cashing vars
-    let ui = $(".b-ui"),
+    let ui                   = $(".b-ui"),
+        uiMain               = ui.find(".b-ui__main"),
         toolsList            = ui.find(".b-ui__tools"),
         uiBtns               = ui.find(".c-ui-btn"),
         editBackgroundTool   = ui.find(".b-ui__tool__edit-bcg"),
@@ -101,8 +101,12 @@ module.exports = function( ) {
                 </div>
             </div>`
           );
-            let dragableItem = $('.dragableText');
-            dragableItem.click(clickTextOnCanvassListener);
+
+        let dragableItem = $('.dragableText');
+        dragableItem.click(clickTextOnCanvassListener);
+
+        //generate general settings tool tab
+        GS.generateGlobalSettings( ui, data.story)
 
     }
 
@@ -148,12 +152,21 @@ module.exports = function( ) {
         toolsList.find(".active").removeClass("active");
     }
 
-    function showSelectedEditTool( ){
+    function showSelectedEditTool( event ){
+      event.stopPropagation();
       //triger when clicking on tools icons
         let self = $(this),
-            toolToActivate  = $(`.b-ui__tool__${self.attr("data-toolClass")}`);
+            toolToActivate  = $(`.b-ui__tool__${self.attr("data-toolclass")}`);
+
+            console.log(self.data('toolclass'));
+
+            if(self.data('toolclass') != 'edit-text'){
+                //if menu icon is NOT edit text - deselect all text on canvas
+                $('.c-canvas--center .selected').removeClass('selected');
+            }
 
             if(!self.hasClass('selected')){
+                //if cliced icon in menu is not selected
                 $('.b-ui__menu .c-ui-btn.selected').removeClass("selected");
                 //add white color on icon
                 self.addClass("selected");
@@ -267,14 +280,34 @@ module.exports = function( ) {
                   </span>
                   <span class='text'>${css.color}</span>
               </div>
+              <div class="b-ui__tool__edit-text__item add-remove">
+                    <div class='item'>
+                        <span class='btn'>+</span>
+                        <span class='label'>Add Label</span>
+                    </div>
+                    <div class='item'>
+                        <span class='btn'>-</span>
+                        <span class='label'>Delete Label</div>
+                    </div>
+              </div>
               <div class="b-ui__tool__edit-text__item label">
                   <textarea rows="10">${payload.data.text}</textarea>
               </div>
-              <div class="b-ui__tool__edit-text__item-switches">
+              <div class="b-ui__tool__edit-text__item switches">
+                  <label class="c-switch">
+                    <input type="checkbox" checked>
+                    <span class="slider round"></span>
+                    <span class='c-switch__title'>Bold</span>
+                  </label>
                   <label class="c-switch">
                     <input type="checkbox">
                     <span class="slider round"></span>
-                    <span class='c-switch__title'>Regular</span>
+                    <span class='c-switch__title'>Italic</span>
+                  </label>
+                  <label class="c-switch">
+                    <input type="checkbox">
+                    <span class="slider round"></span>
+                    <span class='c-switch__title'>Underline</span>
                   </label>
               </div>
             `
@@ -301,11 +334,20 @@ module.exports = function( ) {
       //check if
       //element interacted with on canvas is already displayed in edit Tools box
       let toolState = state.tools.editText,
-          textTool = $(".b-ui__tool__edit-text");
-        if( toolState.pageName == payload.pageName && toolState.propName == payload.propName ){
+          textTool = $(".b-ui__tool__edit-text"),
+          isTextToolActive = $('.c-ui-btn--edit-text').hasClass('selected');
+
+          console.log(toolState);
+
+        if( toolState.pageName == payload.pageName && toolState.propName == payload.propName && isTextToolActive ){
           return true
         }
         return false
+    }
+
+    function deselectAllTextOnCanvas( event ){
+        event.stopPropagation();
+        $('.c-canvas--center .selected').removeClass('selected');
     }
 
     function generateAndShowEditTextTool( payload ){
@@ -368,12 +410,16 @@ module.exports = function( ) {
 
     }
     function clickTextOnCanvassListener (event) {
+        event.stopPropagation();
+        console.log('klik');
+
       //when user click text on canvas
          //let target    = event.target;
          let target   = $(this),
              pageName  = target.attr("data-page"),
              propName  = target.attr("data-name"),
              payload   = { data:data.pages[pageName][propName], pageName, propName };
+        console.log({"isTextTollActive":isTextInEditMode( payload )});
          if( !isTextInEditMode( payload ) ){
            generateAndShowEditTextTool( payload );
            selectItem( target );
@@ -407,6 +453,7 @@ module.exports = function( ) {
     init();
     backgroundThumbs.click( handleChangeBackgroundImage );
     uiBtns.click( showSelectedEditTool );
+    uiMain.click(deselectAllTextOnCanvas);//desecelt text on canvas
     $('.get-json').click(getJSON);
 
     interact('.dragableText')
