@@ -1,6 +1,9 @@
 var $ = require('jquery');
 //var interact = require('interactjs');
-var GS = require('./partials/globalSettings.js');
+var GS      = require('./partials/globalSettings.js');
+var SLIDER  = require('./partials/slider.js');
+
+
 
 /*MODULE EXPORT*/
 module.exports = function( ) {
@@ -19,7 +22,7 @@ module.exports = function( ) {
                 id:1,
 
                 background:{
-                    toolForEdit:"edit-bcg",
+                    toolForEdit:"editBcg",
                     src:"img/placeholder.jpg",
                 },
 
@@ -47,6 +50,11 @@ module.exports = function( ) {
                     }
                 }
             }
+        },
+
+        slider:{
+            count:0,
+            currentSlide:0,
         }
     };
     //cashing vars
@@ -56,14 +64,17 @@ module.exports = function( ) {
         uiBtns               = ui.find(".c-ui-btn"),
         editBackgroundTool   = ui.find(".b-ui__tool__edit-bcg"),
         editTextTool         = ui.find(".b-ui__tool__edit-text"),
-        backgroundThumbs     = ui.find(".b-ui__tool__edit-bcg__item");
+        backgroundThumbs     = ui.find(".b-ui__tool__edit-bcg__item"),
+        leftSlide            = ui.find(".c-canvas--center"),
+        centerSlide          = ui.find(".c-canvas--center"),
+        rightSlide           = ui.find(".c-canvas--center");
 
     //states
     //manage state of local app
     let state = {
         tools:{
-            edtiBcg:{
-                //src:"img/placeholder.jpg",
+            editBcg:{
+                src:"img/placeholder.jpg",
                 pageName:'page1',
                 propName:'background',
             },
@@ -81,26 +92,7 @@ module.exports = function( ) {
             titleCss = page.title.css,
             descriptionCss = page.description.css;
 
-        //finds canvas - phone  and creates interacive html
-        ui.find(".c-canvas--center").append(
-            ` <div class="" id='page${page.id}'>
-                <div class="c-canvas__bcg-img">
-                    <img src="${page.background.src}" alt="">
-                </div>
-                <div class="c-canvas__title dragableText" data-page="page${page.id}" data-name="title">
-                    <h1
-                    class="title"
-                    style="${generateInlineCss(titleCss)}"
-                    >${page.title.text}</h1>
-                </div>
-                <div class="c-canvas__description dragableText" data-page="page${page.id}" data-name="description">
-                    <p
-                    class="description"
-                    style="${generateInlineCss(descriptionCss)}"
-                    >${page.description.text}</p>
-                </div>
-            </div>`
-          );
+        SLIDER.addSlide(uiMain, data);//generate first empty slideshow - canvas
 
         let dragableItem = $('.dragableText');
         dragableItem.click(clickTextOnCanvassListener);
@@ -123,12 +115,22 @@ module.exports = function( ) {
       //when user selecets image appay it to canvas
         let self = $(this);
 
+        let target   = $('.c-canvas--center .c-canvas__bcg-img'),
+            pageName  = target.attr("data-page"),
+            propName  = target.attr("data-name"),
+            payload   = { data:data.pages[pageName][propName], pageName, propName };
+
+        console.log(payload);
+
         if( !self.hasClass('selected') ) {
             //if image is not selecetd
             $(".b-ui__tool__edit-bcg .selected").removeClass('selected');
             self.addClass('selected');
             let canvasBackground  = ui.find(".c-canvas--center .c-canvas__bcg-img img");
             canvasBackground.attr('src', self.attr("data-src") );
+            setToolState(payload);
+            data.pages[pageName][propName].src = self.attr("data-src");//set new bcg img src
+            console.log(state);
         }
     }
 
@@ -455,6 +457,17 @@ module.exports = function( ) {
     uiBtns.click( showSelectedEditTool );
     uiMain.click(deselectAllTextOnCanvas);//desecelt text on canvas
     $('.get-json').click(getJSON);
+    $('.b-ui__tool__edit-layout__add-remove .item').click( function(){
+            SLIDER.addSlide(uiMain, data);
+    });
+    $('.control.left').click(function(){
+        console.log('PREV SLIDE');
+        SLIDER.prevSlide(uiMain, data);
+    })
+    $('.control.right').click(function(){
+        console.log('Next SLIDE');
+        SLIDER.nextSlide(uiMain, data);
+    })
 
     interact('.dragableText')
     .draggable({

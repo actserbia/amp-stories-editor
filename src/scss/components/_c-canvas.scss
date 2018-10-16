@@ -6,6 +6,13 @@
     box-shadow: 6px 7px 9px -1px rgba(0,0,0,0.2);
     overflow: hidden;
     border-radius: 18px;
+    opacity:0;
+    transition: all 0.4s ease;
+
+    &.visible{
+        opacity: 1;
+    }
+
     &--side{
         width: 32.4rem;
         height: 57.6rem;
@@ -44,8 +51,8 @@
 
     &__title{
         position: absolute;
-        top:20px;
-        left:50px;
+        top: 2rem;
+        left: 3rem;
         color: white;
 
         h1{
@@ -55,8 +62,8 @@
 
     &__description{
         position: absolute;
-        bottom:50px;
-        left:50px;
+        bottom: 5rem;
+        left: 3rem;
         color: white;
 
         p{
