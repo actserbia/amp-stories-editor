@@ -17,9 +17,44 @@
         }
     }
 
+    &--tab{
+        align-self: flex-end;
+        background-color: #1b212f;
+        border: none;
+        padding: 1.6rem 3.2rem;
+        border-radius: 0;
+        position: relative;
+        &.selected {
+            top:1px;
+            transform-origin: bottom right;
+            &:after {
+                content: " ";
+                position: absolute;
+                display: block;
+                width: 90%;
+                height: 100%;
+                top: 0;
+                right: -13px;
+                z-index: -1;
+                background: red;
+                // transform-origin: bottom left;
+                -ms-transform: skew(20deg, 0deg);
+                -webkit-transform: skew(20deg, 0deg);
+                transform: skew(20deg, 0deg);
+            }
+            &:hover{
+                @include breakpoint(desktop){
+                    cursor: pointer;
+                    opacity: 1;
+                }
+            }
+        }
+    }
+
     &--disabled{
         pointer-events: none;
         color: #2f3545;
+        background-color: #151a26;
         &:hover{
             @include breakpoint(desktop){
                 cursor: not-allowed;
