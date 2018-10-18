@@ -420,6 +420,141 @@
 
             }
         }
+        &__edit-bookend{
+            width: 0;
+            height: 0;
+            padding: 0;
+            margin: 0;
+            visibility: hidden;
+            opacity: 0;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+
+            &__title{
+                @include font-size(22,22);
+                color: #f8f8f8;
+                font-family: $ff-main-medium;
+                margin-bottom: 2.7rem;
+                padding-left: 1.6rem;
+                &-articles{
+                    padding-left:0;
+                    @include font-size(22,22);
+                    color: #f8f8f8;
+                    font-family: $ff-main-medium;
+                    margin-bottom: 2.7rem;
+                }
+            }
+
+            &__add-img{
+                width: 100%;
+                padding: 2rem 1.6rem;
+                margin-bottom: 3.2rem;
+
+                &__inner{
+                    border-radius: 2px;
+                    border: solid 1px #2f3545;
+                    height: 12.8rem;
+                    display: flex;
+                    flex-flow: row nowrap;
+                    align-items: center;
+                    justify-content: center;
+                    width: 100%;
+                }
+
+                p{
+                    @include font-size(14, 14);
+                    color: #3f4656;
+                    & .icon{
+                        fill:white;
+                    }
+
+                    & .link{
+                        color: white;
+                        font-family: $ff-main-medium;
+                    }
+                }
+            }
+
+            &__images-list{
+                //margin-top: 24.8rem;
+                background-color: #1f2534;
+                width: 100%;
+                //max-height: 80rem;
+                //height: 80rem;
+                //overflow-y: scroll;
+                padding: 2rem 1.6rem;
+
+                & .search-img{
+                    position: relative;
+                    margin-bottom: 2rem;
+
+                    & svg{
+                        position: absolute;
+                        left: 1.6rem;
+                        top: 0.9rem;
+                        display: block;
+                        width: 2rem;
+                        height: 2rem;
+                        fill:white;
+                    }
+
+                    & input{
+                        background: transparent;
+                        border-radius: 2px;
+                        border: solid 1px #2f3545;
+                        padding: 1rem 1.6rem;
+                        padding-left: 4rem;
+                        color: #626a7b;
+                        @include font-size(14,14);
+                        width: 100%;
+                        &::placeholder {
+                            color: #626a7b;
+                        }
+                    }
+                }
+            }
+
+            &__switches{
+                padding-left: 1.6rem;
+                margin-bottom: 4.5rem;
+            }
+            &__item{
+                width: 100%;
+                margin-bottom: 1.5rem;
+                //border: 4px solid rgba(255,0,0,0);
+                opacity: 0.2;
+                transition: all 0.3s ease;
+                display: flex;
+                flex-flow: row nowrap;
+                align-items: center;
+                justify-content: flex-start;
+
+                img{
+                    height: 8rem;
+                    width: auto;
+                }
+
+                p{
+                    @include font-size(14, 14);
+                    font-family: monospace;
+                    color:#f8f8f8;
+                    margin-left: 3rem;
+                }
+
+                &:hover{
+                    @include breakpoint(overPhone){
+                        cursor: pointer;
+                        opacity: 0.7;
+                        //border: 4px solid rgba(255,255,255,0.6);
+                    }
+                }
+
+                &.selected{
+                    //border: 4px solid white;
+                    opacity: 1;
+                }
+            }
+        }
 
         &.active{
             display: flex;

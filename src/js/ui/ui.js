@@ -3,8 +3,6 @@ var $ = require('jquery');
 var GS      = require('./partials/globalSettings.js');
 var SLIDER  = require('./partials/slider.js');
 
-
-
 /*MODULE EXPORT*/
 module.exports = function( ) {
 
@@ -392,25 +390,6 @@ module.exports = function( ) {
       }
     }
 
-    function dragTextStartListener (event) {
-      //when text drag on canvas STARTS
-         let target    = event.target,
-             pageName  = target.getAttribute("data-page"),
-             propName  = target.getAttribute("data-name"),
-             payload   = { data:data.pages[pageName][propName], pageName, propName };
-
-        console.log(target.classList[0]);
-         generateAndShowEditTextTool( payload );
-         selectItem($('.'+target.classList[0]));
-
-         //match icon in tools menu with draged element
-         if(!$(".c-ui-btn--edit-text").hasClass('selected')){
-             $('.b-ui__menu .c-ui-btn.selected').removeClass("selected");
-             //add white color on icon
-             $(".c-ui-btn--edit-text").addClass("selected");
-         }
-
-    }
     function clickTextOnCanvassListener (event) {
         event.stopPropagation();
         console.log('klik');
@@ -421,7 +400,7 @@ module.exports = function( ) {
              pageName  = target.attr("data-page"),
              propName  = target.attr("data-name"),
              payload   = { data:data.pages[pageName][propName], pageName, propName };
-        console.log({"isTextTollActive":isTextInEditMode( payload )});
+        console.log({"isTextToolActive":isTextInEditMode( payload )});
          if( !isTextInEditMode( payload ) ){
            generateAndShowEditTextTool( payload );
            selectItem( target );
@@ -432,6 +411,26 @@ module.exports = function( ) {
                $(".c-ui-btn--edit-text").addClass("selected");
            }
          }
+    }
+
+    function dragTextStartListener (event) {
+      //when text drag on canvas STARTS
+         let target    = event.target,
+             pageName  = target.getAttribute("data-page"),
+             propName  = target.getAttribute("data-name"),
+             payload   = { data:data.pages[pageName][propName], pageName, propName };
+
+        console.log(target.classList[0]);
+         generateAndShowEditTextTool( payload );
+         selectItem($('.c-canvas--center .'+target.classList[0]));
+
+         //match icon in tools menu with draged element
+         if(!$(".c-ui-btn--edit-text").hasClass('selected')){
+             $('.b-ui__menu .c-ui-btn.selected').removeClass("selected");
+             //add white color on icon
+             $(".c-ui-btn--edit-text").addClass("selected");
+         }
+
     }
 
     function dragTextMoveListener (event) {
@@ -451,6 +450,26 @@ module.exports = function( ) {
       target.setAttribute('data-y', y);
     }
 
+    function bindInteractJS(){
+        interact('.dragableText')
+        .draggable({
+           restrict: {
+             restriction: "parent",
+             endOnly: true,
+             elementRect: { top: 0, left: 0, bottom: 1, right: 1 }
+           },
+           onmove: dragTextMoveListener,
+           onstart: dragTextStartListener,
+
+       })
+        console.log('bind interactJS');
+    }
+
+    function unbindInteractJS(){
+       interact('.dragableText').unset();
+       console.log('unbind interactJS');
+    }
+
     //FUNCTION IVOCATIONS
     init();
     backgroundThumbs.click( handleChangeBackgroundImage );
@@ -458,26 +477,26 @@ module.exports = function( ) {
     uiMain.click(deselectAllTextOnCanvas);//desecelt text on canvas
     $('.get-json').click(getJSON);
     $('.b-ui__tool__edit-layout__add-remove .item').click( function(){
-            SLIDER.addSlide(uiMain, data);
+        console.log('NEW SLIDE');
+        unbindInteractJS();
+        //$('.dragableText').off(clickTextOnCanvassListener);
+        SLIDER.addSlide(uiMain, data);
+        $('.dragableText').click(clickTextOnCanvassListener);
+        bindInteractJS();
     });
     $('.control.left').click(function(){
+        unbindInteractJS()
         console.log('PREV SLIDE');
         SLIDER.prevSlide(uiMain, data);
-    })
+        $('.dragableText').click(clickTextOnCanvassListener);
+        bindInteractJS();
+    });
     $('.control.right').click(function(){
+        unbindInteractJS()
         console.log('Next SLIDE');
         SLIDER.nextSlide(uiMain, data);
-    })
-
-    interact('.dragableText')
-    .draggable({
-       restrict: {
-         restriction: "parent",
-         endOnly: true,
-         elementRect: { top: 0, left: 0, bottom: 1, right: 1 }
-       },
-       onmove: dragTextMoveListener,
-       onstart: dragTextStartListener,
-
-   })
+        $('.dragableText').click(clickTextOnCanvassListener);
+        bindInteractJS();
+    });
+    bindInteractJS('.dragableText');
 };

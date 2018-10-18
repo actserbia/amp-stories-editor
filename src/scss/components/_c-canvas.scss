@@ -17,9 +17,11 @@
         width: 32.4rem;
         height: 57.6rem;
         background: transparent;
-        opacity: 0.6;
         position: absolute;
         z-index: 3;
+        &.visible{
+            opacity: 0.5;
+        }
     }
     &--left{
         left: 2rem;
