@@ -17,7 +17,9 @@ vendor/
 .settings
 .idea
 
+# Stats file for bundle analysis
+stats.json
 
-
-/html/css/
-/html/_common/javascript/webedia/main.js*
+# Uncomment lines below when multiple people working on same project
+# dist/css/style.css
+# dist/js/*.js
