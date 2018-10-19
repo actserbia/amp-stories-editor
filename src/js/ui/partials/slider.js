@@ -54,7 +54,7 @@ module.exports = {
         //console.log(typeof sliderData.currentSlide);
 
         sliderData.count++;//increment num of slides
-        sliderData.currentSlide++; //increase current slide by 1
+        sliderData.currentSlide = sliderData.count; //increase current slide by 1
         //console.log(sliderData.count);
 
         //clone current slide to left position
