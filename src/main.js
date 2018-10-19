@@ -4,7 +4,7 @@
 var css = require('./scss/style.scss');
 
 // ----- Require modules here
-var testLog = require('./js/test/test.js');
+var ui = require('./js/ui/ui.js');
 
 // ----- Call modules here
-testLog();
+ui();

@@ -3,7 +3,9 @@ var webpack = require('webpack'),
     WebpackBuildNotifierPlugin = require('webpack-build-notifier'),
     HtmlWebpackPlugin = require('html-webpack-plugin'),
     HtmlWebpackHarddiskPlugin = require('html-webpack-harddisk-plugin'),
-    path = require('path');
+    path = require('path'),
+    CopyWebpackPlugin = require('copy-webpack-plugin');
+
 
 module.exports = {
     entry: {
@@ -109,6 +111,7 @@ module.exports = {
         new WebpackBuildNotifierPlugin({
             title: "Webpack",
             suppressSuccess: false
-        })
+        }),
+        new CopyWebpackPlugin([ { from: path.resolve(__dirname, '../src/assets/img'), to: path.resolve(__dirname, '../dist/assets/img') } ])
     ]
 };

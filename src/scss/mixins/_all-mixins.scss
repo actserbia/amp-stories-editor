@@ -1,8 +1,6 @@
 // ----- Mixins
 
 @import 'm--breakpoints';
-
-@import	'm--font-face';
 @import	'm--font-size';
 @import	'm--line-height';
 @import "m--letter-spacing";
@@ -11,3 +9,4 @@
 
 @import 'm--absolute';
 @import 'm--clearfix';
+@import 'm--ie';

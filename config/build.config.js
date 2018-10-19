@@ -2,13 +2,15 @@ var webpack = require('webpack'),
     ExtractTextPlugin = require('extract-text-webpack-plugin'),
     HtmlWebpackPlugin = require('html-webpack-plugin'),
     CleanWebpackPlugin = require('clean-webpack-plugin'),
-    path = require('path');
+    path = require('path'),
+    CopyWebpackPlugin = require('copy-webpack-plugin');
+
 
 // ----- Output file paths
 var outputDir = '../dist/',
     cssOutput = 'css/style.[chunkhash:8].css',
     jsOutput = 'js/[name].[chunkhash:8].bundle.js';
-
+    
 module.exports = {
     entry: {
         main: './src/main.js'
@@ -124,6 +126,7 @@ module.exports = {
                 removeAttributeQuotes: true,
                 collapseWhitespace: true
             }
-        })
+        }),
+        new CopyWebpackPlugin([ { from: path.resolve(__dirname, '../src/assets/img'), to: path.resolve(__dirname, '../dist/assets/img') } ])
     ]
 };

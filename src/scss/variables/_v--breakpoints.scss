@@ -3,12 +3,12 @@
 // Tablet
 $tabletPortrait     : 768px;
 $tabletLandscape    : 1024px;
-$fullHD				: 1920px;
+$fullHD				      : 1920px;
 
 // Phone
 // $phoneSmall      : $tabletPortrait / 2;
-$phone              : $tabletPortrait - 1;
-$overPhone          : $tabletPortrait;
+$phone              : $tabletPortrait;
+$overPhone          : $tabletPortrait + 1;
 
 // Desktop
 $toDesktop          : $tabletLandscape;
@@ -32,5 +32,7 @@ $breakpoints        : (
   'toDesktop'       : '(#{$max}: #{$toDesktop})',
   'desktop'         : '(#{$min}: #{$desktop})',
   'siteMaxWidth'    : '(#{$max}: #{$siteMaxWidth})',
-  'overDesign'      : '(#{$min}: #{$siteMaxWidth})'
+  'fullHD'  		: '(#{$min}: #{$fullHD})',
+  'over1280'  		: '(#{$min}: 1280px)',
+  'overDesign'  	: '(#{$min}: 1700px)'
 );
