@@ -7,7 +7,12 @@ function generateInlineCss( obj ){
     return ( `color:${obj.color};
      font-family:${obj.font};
      font-size:${obj.size}px;
-     font-weight:${obj.weight};`);
+     font-weight:${obj.weight};
+     font-style:${obj.style};
+     text-align:${obj.align};
+     text-decoration:${obj.decoration};`);
+     // top:${obj.top};
+     // left:${obj.left};
 }
 
 function generateSlide( pageObj, inCenter ){
@@ -21,13 +26,21 @@ function generateSlide( pageObj, inCenter ){
         <div class="c-canvas__bcg-img" data-page="page${pageObj.id}" data-name="background">
             <img src="${pageObj.background.src}" alt="">
         </div>
-        <div class="c-canvas__title ${dragableClass}" data-page="page${pageObj.id}" data-name="title">
+        <div class="c-canvas__title ${dragableClass}"
+             data-page="page${pageObj.id}"
+             data-name="title"
+             style="transform: translate(${pageObj.title.css.x},${pageObj.title.css.y})"
+        >
             <h1
             class="title"
             style="${generateInlineCss(pageObj.title.css)}"
             >${pageObj.title.text}</h1>
         </div>
-        <div class="c-canvas__description ${dragableClass}" data-page="page${pageObj.id}" data-name="description">
+        <div class="c-canvas__description ${dragableClass}"
+             data-page="page${pageObj.id}"
+             data-name="description"
+             style="transform: translate(${pageObj.description.css.x},${pageObj.description.css.y})"
+        >
             <p
             class="description"
             style="${generateInlineCss(pageObj.description.css)}"
@@ -77,7 +90,14 @@ module.exports = {
                     color:"#ff0000",
                     font:"Monospace",
                     size:"32",
-                    weight:'400'
+                    weight:'400',
+                    style: "normal",
+                    decoration: "none",
+                    align:'left',
+                    //top:"20px",
+                    //left:"30px",
+                    x:"0px",
+                    y:"0px",
                 }
             },
             description:{
@@ -88,6 +108,13 @@ module.exports = {
                     font:"Helvetica",
                     size:"24",
                     weight:'400',
+                    style: "normal",
+                    decoration: "none",
+                    align:'left',
+                    //top:"200px",
+                    //left:"30px",
+                    x:"0px",
+                    y:"0px",
                 }
             }
         };

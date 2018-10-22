@@ -33,7 +33,13 @@ module.exports = function( ) {
                         color:"#ff0000",
                         font:"Impact",
                         size:"32",
-                        weight:'400'
+                        weight:'400',
+                        decoration: "none",
+                        align:'left',
+                        top:"20px",
+                        left:"30px",
+                        x:"0px",
+                        y:"0px",
                     }
                 },
 
@@ -45,6 +51,12 @@ module.exports = function( ) {
                         font:"Helvetica",
                         size:"24",
                         weight:'400',
+                        decoration: "none",
+                        align:'left',
+                        top:"200px",
+                        left:"30px",
+                        x:"0px",
+                        y:"0px",
                     }
                 }
             }
@@ -202,6 +214,63 @@ module.exports = function( ) {
         console.log("New color is " +   data.pages[pageName][propName].css.color );
     }
 
+    function updateFontBold( event ){
+     //Update font weight when slider is clicked
+        console.log('FontWeight updated');
+        let pageName = state.tools.editText.pageName,
+            propName = state.tools.editText.propName,
+            itemToChangeWeight  = $(`#${pageName} .${propName}`),
+            newWeight = event.target.checked ?'700' :'400';
+
+        itemToChangeWeight.css( {'font-weight': `${newWeight}`} );
+
+        //set fontWeight in global data obj
+        data.pages[pageName][propName].css.weight = newWeight;
+        console.log("New font weight is: " +   data.pages[pageName][propName].css.weight );
+    }
+    function updateFontItalic( event ){
+     //Update font Italic style when slider is clicked
+        console.log('FontItalic updated');
+        let pageName = state.tools.editText.pageName,
+            propName = state.tools.editText.propName,
+            itemToChangeItalic  = $(`#${pageName} .${propName}`),
+            newItalicVal = event.target.checked ?'italic' :'normal';
+
+        itemToChangeItalic.css( {'font-style': `${newItalicVal}`} );
+
+        //set fontWeight in global data obj
+        data.pages[pageName][propName].css.style = newItalicVal;
+        console.log("New font style is: " +   data.pages[pageName][propName].css.style );
+    }
+    function updateFontUnderline( event ){
+     //Update font Underline style when slider is clicked
+        console.log('Font Underline updated');
+        let pageName = state.tools.editText.pageName,
+            propName = state.tools.editText.propName,
+            itemToChangeUnderline  = $(`#${pageName} .${propName}`),
+            newUnderlineVal = event.target.checked ?'underline' :'none';
+
+        itemToChangeUnderline.css( {'text-decoration': `${newUnderlineVal}`} );
+
+        //set fontWeight in global data obj
+        data.pages[pageName][propName].css.decoration = newUnderlineVal;
+        console.log("New font style is: " +   data.pages[pageName][propName].css.decoration );
+    }
+    function updateTextCenter( event ){
+     //Update font Underline style when slider is clicked
+        console.log('Font Alignment updated');
+        let pageName = state.tools.editText.pageName,
+            propName = state.tools.editText.propName,
+            itemToChange  = $(`#${pageName} .${propName}`),
+            newAlignVal = event.target.checked ?'center' :'left';
+
+        itemToChange.css( {'text-align': `${newAlignVal}`} );
+
+        //set fontWeight in global data obj
+        data.pages[pageName][propName].css.align = newAlignVal;
+        console.log("New text alignment is: " +   data.pages[pageName][propName].css.align );
+    }
+
     function updateFontSize( event ){
     //Update font size with arrows and by typeing
       console.log('FontSize update');
@@ -260,7 +329,11 @@ module.exports = function( ) {
     }
 
     function generateEditTxtHTML( payload ){
-        let css = payload.data.css;
+        let css = payload.data.css,
+            isBold = css.weight == '400' ?'' : 'checked',
+            isItalic = css.style == 'normal' ?'' :'checked',
+            isUnderline = css.decoration == 'none' ?'' :'checked',
+            isCenter = css.align == 'left' ?'' :'checked';
         $('.b-ui__tool .b-ui__tool__edit-text__inner')
         .empty()
         .append(
@@ -294,27 +367,36 @@ module.exports = function( ) {
                   <textarea rows="10">${payload.data.text}</textarea>
               </div>
               <div class="b-ui__tool__edit-text__item switches">
-                  <label class="c-switch">
-                    <input type="checkbox" checked>
+                  <label class="c-switch" for='bold'>
+                    <input type="checkbox" id='bold' ${isBold}>
                     <span class="slider round"></span>
                     <span class='c-switch__title'>Bold</span>
                   </label>
-                  <label class="c-switch">
-                    <input type="checkbox">
+                  <label class="c-switch" for='italic'>
+                    <input type="checkbox" id='italic' ${isItalic}>
                     <span class="slider round"></span>
                     <span class='c-switch__title'>Italic</span>
                   </label>
-                  <label class="c-switch">
-                    <input type="checkbox">
+                  <label class="c-switch" for='underline'>
+                    <input type="checkbox" id='underline' ${isUnderline}>
                     <span class="slider round"></span>
                     <span class='c-switch__title'>Underline</span>
+                  </label>
+                  <label class="c-switch" for='center'>
+                    <input type="checkbox" id='center' ${isCenter}>
+                    <span class="slider round"></span>
+                    <span class='c-switch__title'>Center</span>
                   </label>
               </div>
             `
         );
         let colorPicker = $(".b-ui__tool__edit-text__item.color input"),
             fontSize    = $(".b-ui__tool__edit-text__item.size input"),
-            label       = $(".b-ui__tool__edit-text__item.label textarea")
+            label       = $(".b-ui__tool__edit-text__item.label textarea"),
+            bold        = $(".b-ui__tool__edit-text__item.switches #bold"),
+            italic      = $(".b-ui__tool__edit-text__item.switches #italic"),
+            underline   = $(".b-ui__tool__edit-text__item.switches #underline"),
+            center      = $(".b-ui__tool__edit-text__item.switches #center");
         colorPicker.on('change', function(){
             let color = getPickedColor();
             updateTextColor(color);
@@ -323,6 +405,10 @@ module.exports = function( ) {
 
         fontSize.on('keyup', updateFontSize);
         label.on('keyup', updateTextLabel);
+        bold.on('click', updateFontBold);
+        italic.on('click', updateFontItalic);
+        underline.on('click', updateFontUnderline);
+        center.on('click', updateTextCenter);
     }
 
     function getJSON(){
@@ -432,8 +518,22 @@ module.exports = function( ) {
          }
 
     }
+    function dragTextEndListener (event) {
+      //when text drag on canvas STARTS
+         let target    = event.target,
+             pageName  = target.getAttribute("data-page"),
+             propName  = target.getAttribute("data-name"),
+             payload   = { data:data.pages[pageName][propName], pageName, propName };
+
+        data.pages[pageName][propName].css.x = target.getAttribute('data-x') + 'px';
+        data.pages[pageName][propName].css.y = target.getAttribute('data-y') + 'px';
+        console.log('DRAG END');
+        console.log('X: ',target.getAttribute('data-x'));
+        console.log('Y: ',target.getAttribute('data-y'));
+    }
 
     function dragTextMoveListener (event) {
+      console.log(event.target.getAttribute('data-x'));
       var target = event.target,
           // keep the dragged position in the data-x/data-y attributes
           x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx,
@@ -441,7 +541,6 @@ module.exports = function( ) {
 
 
       // translate the element
-      target.style.webkitTransform =
       target.style.transform =
         'translate(' + x + 'px, ' + y + 'px)';
 
@@ -460,6 +559,7 @@ module.exports = function( ) {
            },
            onmove: dragTextMoveListener,
            onstart: dragTextStartListener,
+           onend: dragTextEndListener
 
        })
         console.log('bind interactJS');
@@ -478,25 +578,25 @@ module.exports = function( ) {
     $('.get-json').click(getJSON);
     $('.b-ui__tool__edit-layout__add-remove .item').click( function(){
         console.log('NEW SLIDE');
-        unbindInteractJS();
+        //unbindInteractJS();
         //$('.dragableText').off(clickTextOnCanvassListener);
         SLIDER.addSlide(uiMain, data);
         $('.dragableText').click(clickTextOnCanvassListener);
-        bindInteractJS();
+        //bindInteractJS();
     });
     $('.control.left').click(function(){
-        unbindInteractJS()
+        //unbindInteractJS()
         console.log('PREV SLIDE');
         SLIDER.prevSlide(uiMain, data);
         $('.dragableText').click(clickTextOnCanvassListener);
-        bindInteractJS();
+        //bindInteractJS();
     });
     $('.control.right').click(function(){
-        unbindInteractJS()
+        //unbindInteractJS()
         console.log('Next SLIDE');
         SLIDER.nextSlide(uiMain, data);
         $('.dragableText').click(clickTextOnCanvassListener);
-        bindInteractJS();
+        //bindInteractJS();
     });
     bindInteractJS('.dragableText');
 };
