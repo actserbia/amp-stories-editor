@@ -12,7 +12,8 @@ module.exports = function( ) {
             title:'AMP story builder',
             publisher:'Diwnaee Serbia',
             publisherLogoSrc:'src/logo.jpg',
-            posterPortraitSrc:'src/posterPortrait.jpg'
+            posterPortraitSrc:'src/posterPortrait.jpg',
+            ads:false
         },
 
         pages:{
@@ -31,15 +32,13 @@ module.exports = function( ) {
                     //css of item
                     css:{
                         color:"#ff0000",
-                        font:"Impact",
+                        font:"Arial Black",
                         size:"32",
                         weight:'400',
                         decoration: "none",
                         align:'left',
-                        top:"20px",
-                        left:"30px",
-                        x:"0px",
-                        y:"0px",
+                        x:'30',
+                        y:'50',
                     }
                 },
 
@@ -53,10 +52,8 @@ module.exports = function( ) {
                         weight:'400',
                         decoration: "none",
                         align:'left',
-                        top:"200px",
-                        left:"30px",
-                        x:"0px",
-                        y:"0px",
+                        x:'30',
+                        y:'300',
                     }
                 }
             }
@@ -341,7 +338,20 @@ module.exports = function( ) {
             //${css.weight}
             `
               <div class="b-ui__tool__edit-text__item family">
-                  <span class='icon'>Aa</span><span class='text'>${css.font}</span>
+                  <span class='icon'>Aa</span>
+                  <div class='list'>
+                    <span class='selected'>${css.font}</span>
+                    <ul>
+                        <li data-font='Arial'> Arial </li>
+                        <li data-font='Arial Black'> Arial Black</li>
+                        <li data-font='Helvetica'> Helvetica </li>
+                        <li data-font='Times'> Times </li>
+                        <li data-font='Verdana'> Verdana </li>
+                        <li data-font='Georgia'> Georgia </li>
+                        <li data-font='Palatino'> Palatino </li>
+                        <li data-font='Bookman'> Bookman </li>
+                    </ul>
+                  </div>
               </div>
               <div class="b-ui__tool__edit-text__item size">
                   <input class='font-size' type="text" value="${css.size}">
@@ -390,13 +400,16 @@ module.exports = function( ) {
               </div>
             `
         );
-        let colorPicker = $(".b-ui__tool__edit-text__item.color input"),
-            fontSize    = $(".b-ui__tool__edit-text__item.size input"),
-            label       = $(".b-ui__tool__edit-text__item.label textarea"),
-            bold        = $(".b-ui__tool__edit-text__item.switches #bold"),
-            italic      = $(".b-ui__tool__edit-text__item.switches #italic"),
-            underline   = $(".b-ui__tool__edit-text__item.switches #underline"),
-            center      = $(".b-ui__tool__edit-text__item.switches #center");
+        let colorPicker     = $(".b-ui__tool__edit-text__item.color input"),
+            fontSize        = $(".b-ui__tool__edit-text__item.size input"),
+            label           = $(".b-ui__tool__edit-text__item.label textarea"),
+            bold            = $(".b-ui__tool__edit-text__item.switches #bold"),
+            italic          = $(".b-ui__tool__edit-text__item.switches #italic"),
+            underline       = $(".b-ui__tool__edit-text__item.switches #underline"),
+            center          = $(".b-ui__tool__edit-text__item.switches #center"),
+            fontSelected    = $(".b-ui__tool__edit-text__item.family .selected"),
+            fontList        = $(".b-ui__tool__edit-text__item.family .list ul"),
+            fontListItem    = fontList.find('li');
         colorPicker.on('change', function(){
             let color = getPickedColor();
             updateTextColor(color);
@@ -409,6 +422,22 @@ module.exports = function( ) {
         italic.on('click', updateFontItalic);
         underline.on('click', updateFontUnderline);
         center.on('click', updateTextCenter);
+        fontSelected.on('click', function(){
+            fontList.slideToggle()
+        });
+        fontListItem.on('click', function(){
+            let item = $(this),
+                newFontName = item.data('font'),
+                pageName = state.tools.editText.pageName,
+                propName = state.tools.editText.propName,
+                itemToChangeFontFamily = $(`#${pageName} .${propName}`);
+            console.log(newFontName);
+
+            itemToChangeFontFamily.css( {'font-family': `${newFontName}`} );//apply css
+            data.pages[pageName][propName].css.font = newFontName;//update global data
+            fontList.slideUp(200);//hide menu
+            fontSelected.text(newFontName); //change selected font text
+        })
     }
 
     function getJSON(){
@@ -525,8 +554,8 @@ module.exports = function( ) {
              propName  = target.getAttribute("data-name"),
              payload   = { data:data.pages[pageName][propName], pageName, propName };
 
-        data.pages[pageName][propName].css.x = target.getAttribute('data-x') + 'px';
-        data.pages[pageName][propName].css.y = target.getAttribute('data-y') + 'px';
+        data.pages[pageName][propName].css.x = target.getAttribute('data-x');
+        data.pages[pageName][propName].css.y = target.getAttribute('data-y');
         console.log('DRAG END');
         console.log('X: ',target.getAttribute('data-x'));
         console.log('Y: ',target.getAttribute('data-y'));

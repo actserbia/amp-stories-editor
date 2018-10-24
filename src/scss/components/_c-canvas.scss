@@ -35,27 +35,19 @@
     }
 
     .dragableText{
-
+        max-width: 95%;
     }
 
     .selected{
-      &::before{
-        content:"";
-        border: 1px dashed gold;
-        //background: rgba(0,0,0,0.2);
-        position: absolute;
-        left: -5px;
-        top: -5px;
-        width: calc(100% + 10px);
-        height: calc(100% + 10px);
-      }
+      border: 1px dashed gold;
     }
 
     &__title{
         position: absolute;
-        top: 2rem;
-        left: 3rem;
+        top: 0rem;
+        left: 0rem;
         color: white;
+
 
         h1{
             @include font-size(20,32);
@@ -64,8 +56,8 @@
 
     &__description{
         position: absolute;
-        bottom: 5rem;
-        left: 3rem;
+        top: 0rem;
+        left: 0rem;
         color: white;
 
         p{
