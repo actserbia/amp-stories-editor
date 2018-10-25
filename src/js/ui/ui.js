@@ -10,7 +10,7 @@ module.exports = function( ) {
         story:{
             pagesCount:1,
             title:'AMP story builder',
-            publisher:'Diwnaee Serbia',
+            publisher:'Diwanee Serbia',
             publisherLogoSrc:'src/logo.jpg',
             posterPortraitSrc:'src/posterPortrait.jpg',
             ads:false
@@ -109,15 +109,6 @@ module.exports = function( ) {
 
     }
 
-    function generateInlineCss( obj ){
-      //@obj - data.pages.page1.title.css
-      //pass css obj and generate string of inline params
-        return ( `color:${obj.color};
-         font-family:${obj.font};
-         font-size:${obj.size}px;
-         font-weight:${obj.weight};`);
-    }
-
     function handleChangeBackgroundImage(){
       //when user selecets image appay it to canvas
         let self = $(this);
@@ -165,9 +156,23 @@ module.exports = function( ) {
       event.stopPropagation();
       //triger when clicking on tools icons
         let self = $(this),
-            toolToActivate  = $(`.b-ui__tool__${self.attr("data-toolclass")}`);
+            toolToActivate  = $(`.b-ui__tool__${self.attr("data-toolclass")}`),
+            canvas          = $('.b-ui__main__inner.canvas'),
+            canvasBcg       = $('.b-ui__main__inner.reposition-background');
 
             console.log(self.data('toolclass'));
+
+            // if(self.data('toolclass') == 'edit-bcg'){
+            //     //Show edit background if background icon is cliked in menu
+            //     canvas.hide( 250, function(){
+            //         canvasBcg.show( 250 );
+            //     });
+            // }else{
+            //     //Hide edit background if background icon is NOT cliked in menu
+            //     canvasBcg.hide( 250, function(){
+            //         canvas.show( 250 );
+            //     });
+            // }
 
             if(self.data('toolclass') != 'edit-text'){
                 //if menu icon is NOT edit text - deselect all text on canvas
@@ -589,8 +594,19 @@ module.exports = function( ) {
            onmove: dragTextMoveListener,
            onstart: dragTextStartListener,
            onend: dragTextEndListener
-
        })
+       //
+       //  interact('.dragableImg')
+       //  .draggable({
+       //     restrict: {
+       //       restriction: "parent",
+       //       endOnly: true,
+       //       elementRect: { top: 0, left: 0, bottom: 1, right: 1 }
+       //     },
+       //     //onmove: dragTextMoveListener,
+       //    // onstart: dragTextStartListener,
+       //     //onend: dragTextEndListener
+       // })
         console.log('bind interactJS');
     }
 

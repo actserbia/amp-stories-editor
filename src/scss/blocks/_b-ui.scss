@@ -88,6 +88,10 @@
             align-items: center;
             width: 100%;
             position: relative;
+
+            &.reposition-background{
+                display: none;
+            }
         }
     }
 

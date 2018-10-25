@@ -34,6 +34,16 @@
         right: 2rem;
     }
 
+    &__bcg-img{
+        // position: relative;
+        img{
+            // position: absolute;
+            // top:0;
+            // left:0;
+            // transform: scale(1) translateX(0px) translateY(0px);
+        }
+    }
+
     .dragableText{
         max-width: 95%;
     }
