@@ -22,7 +22,8 @@ module.exports = function( ) {
 
                 background:{
                     toolForEdit:"editBcg",
-                    src:"/assets/img/placeholder.jpg",
+                    src:"assets/img/placeholder.jpg",
+                    x:'0'
                 },
 
                 //item on canvas
@@ -110,12 +111,13 @@ module.exports = function( ) {
     }
 
     function handleChangeBackgroundImage(){
-      //when user selecets image appay it to canvas
+      //when user selecets image appay it to canvas and edit img background
         let self = $(this);
 
-        let target   = $('.c-canvas--center .c-canvas__bcg-img'),
-            pageName  = target.attr("data-page"),
-            propName  = target.attr("data-name"),
+        let canvas          = $('.c-canvas--center .c-canvas__bcg-img'),
+            editModeCanvas  = $(".c-canvas-bcg__img"),
+            pageName  = canvas.attr("data-page"),
+            propName  = canvas.attr("data-name"),
             payload   = { data:data.pages[pageName][propName], pageName, propName };
 
         console.log(payload);
@@ -124,10 +126,21 @@ module.exports = function( ) {
             //if image is not selecetd
             $(".b-ui__tool__edit-bcg .selected").removeClass('selected');
             self.addClass('selected');
+
+            //set img source on main canvas
             let canvasBackground  = ui.find(".c-canvas--center .c-canvas__bcg-img img");
             canvasBackground.attr('src', self.attr("data-src") );
+            canvasBackground.css('transform', 'translate(0)');
+
+            //set img src on edit-background canvas
+            editModeCanvas.find('img').attr('src', self.attr("data-src") );
+            //reset img style and data-x
+            editModeCanvas.attr('data-x', 0);
+            editModeCanvas.css('transform', 'translate(0)');
+
             setToolState(payload);
             data.pages[pageName][propName].src = self.attr("data-src");//set new bcg img src
+            data.pages[pageName][propName].x = 0;//reset img offset
             console.log(state);
         }
     }
@@ -162,17 +175,17 @@ module.exports = function( ) {
 
             console.log(self.data('toolclass'));
 
-            // if(self.data('toolclass') == 'edit-bcg'){
-            //     //Show edit background if background icon is cliked in menu
-            //     canvas.hide( 250, function(){
-            //         canvasBcg.show( 250 );
-            //     });
-            // }else{
-            //     //Hide edit background if background icon is NOT cliked in menu
-            //     canvasBcg.hide( 250, function(){
-            //         canvas.show( 250 );
-            //     });
-            // }
+            if(self.data('toolclass') == 'edit-bcg'){
+                //Show edit background if background icon is cliked in menu
+                canvas.hide( 250, function(){
+                    canvasBcg.show( 250 );
+                });
+            }else{
+                //Hide edit background if background icon is NOT cliked in menu
+                canvasBcg.hide( 250, function(){
+                    canvas.show( 250 );
+                });
+            }
 
             if(self.data('toolclass') != 'edit-text'){
                 //if menu icon is NOT edit text - deselect all text on canvas
@@ -566,6 +579,26 @@ module.exports = function( ) {
         console.log('Y: ',target.getAttribute('data-y'));
     }
 
+  //   function onResizeBackgroundImage(event) {
+  //       var target = event.target,
+  //           x = (parseFloat(target.getAttribute('data-x')) || 0),
+  //           y = (parseFloat(target.getAttribute('data-y')) || 0);
+  //
+  //       // update the element's style
+  //       target.style.width  = event.rect.width + 'px';
+  //       target.style.height = event.rect.height + 'px';
+  //
+  //       // translate when resizing from top or left edges
+  //       x += event.deltaRect.left;
+  //       y += event.deltaRect.top;
+  //
+  //       target.style.webkitTransform = target.style.transform =
+  //           'translate(' + x + 'px,' + y + 'px)';
+  //
+  //       target.setAttribute('data-x', x);
+  //       target.setAttribute('data-y', y);
+  // }
+
     function dragTextMoveListener (event) {
       console.log(event.target.getAttribute('data-x'));
       var target = event.target,
@@ -575,19 +608,51 @@ module.exports = function( ) {
 
 
       // translate the element
-      target.style.transform =
-        'translate(' + x + 'px, ' + y + 'px)';
+      target.style.transform = 'translate(' + x + 'px, ' + y + 'px)';
 
       // update the posiion attributes
       target.setAttribute('data-x', x);
       target.setAttribute('data-y', y);
+    }
+    function dragImageMoveListener (event) {
+      var target = event.target,
+          // keep the dragged position in the data-x
+          x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx;
+
+      var imgWidth   = $('.dragableImg img').width(),
+          frameWidth = $('.c-canvas-bcg__frame').width(),
+          isDragable = imgWidth-10 > frameWidth ?true :false;
+
+      if(isDragable){
+          //limit dragig for images wider than frame
+          // translate the element
+          target.style.transform = 'translate(' + x + 'px)';
+          // update the posiion attributes
+          target.setAttribute('data-x', x);
+      }
+
+    }
+    function dragImageMoveEndListener (event) {
+        let target     = event.target,
+            offsetX    = target.getAttribute('data-x');
+
+        let $canvas    = $('.c-canvas--center'),
+            $pageName  = $canvas.find('.c-canvas__bcg-img').attr("data-page"),
+            $propName  = $canvas.find('.c-canvas__bcg-img').attr("data-name");
+
+        //update global object
+       data.pages[$pageName][$propName].x = offsetX;
+       $canvas.find('img').css('transform', `translate(${offsetX}px)`);
+
+       console.log('DRAG END');
+       console.log('X: ', offsetX );
     }
 
     function bindInteractJS(){
         interact('.dragableText')
         .draggable({
            restrict: {
-             restriction: "parent",
+             restriction: ".c-canvas--center",
              endOnly: true,
              elementRect: { top: 0, left: 0, bottom: 1, right: 1 }
            },
@@ -595,18 +660,37 @@ module.exports = function( ) {
            onstart: dragTextStartListener,
            onend: dragTextEndListener
        })
+
+        interact('.dragableImg')
+        .draggable({
+           max: 1,
+           restrict: {
+             //restriction: "parent",
+             endOnly: true,
+             elementRect: { top: 0, left: 0, bottom: 1, right: 1 }
+           },
+           onmove: dragImageMoveListener,
+           onend: dragImageMoveEndListener,
+       })
+       // .resizable({
+       //     max: 1,
+       //    // resize from all edges and corners
+       //    edges: { left: true, right: true, bottom: true, top: true },
        //
-       //  interact('.dragableImg')
-       //  .draggable({
-       //     restrict: {
-       //       restriction: "parent",
-       //       endOnly: true,
-       //       elementRect: { top: 0, left: 0, bottom: 1, right: 1 }
-       //     },
-       //     //onmove: dragTextMoveListener,
-       //    // onstart: dragTextStartListener,
-       //     //onend: dragTextEndListener
+       //    // keep the edges inside the parent
+       //    restrictEdges: {
+       //      //outer: 'parent',
+       //      endOnly: true,
+       //    },
+       //
+       //    // minimum size
+       //    restrictSize: {
+       //      min: { width: 100, height: 50 },
+       //    },
+       //
+       //    inertia: true,
        // })
+       //.on('resizemove', onResizeBackgroundImage)
         console.log('bind interactJS');
     }
 

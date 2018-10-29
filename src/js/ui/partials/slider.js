@@ -15,6 +15,30 @@ function generateInlineCss( obj ){
      // left:${obj.left};
 }
 
+function updateEditBackgroundImage( background ){
+    //update image in edit background mode
+    //@params background - Obj - object with data of image,
+    let editModeCanvas  = $(".c-canvas-bcg__img");
+
+    //set img src on edit-background canvas
+    editModeCanvas.find('img').attr('src', background.src );
+    //apply img style and data-x
+    editModeCanvas.attr('data-x', background.x);
+    editModeCanvas.css('transform', `translate(${background.x}px)`);
+}
+
+function updateThumbnail( imgSrc ){
+    //@params imgSrc - String - src to match data-src of thumnail
+    //remove selected class on currently selected
+    let thumbsList = $(".b-ui__tool__edit-bcg__images-list"),
+        itemToSelect = thumbsList.find(`[data-src="${imgSrc}"]`);
+
+    thumbsList.find('.selected').removeClass('selected');
+    if( itemToSelect ) itemToSelect.addClass('selected');
+
+    //add selected class on active thumb - match with slider
+}
+
 function generateSlide( pageObj, inCenter ){
     //@params pageObj - page obj in GLOBAL data that represent slide
     //@params isCenter - if slider is in center display (this slider is interactive)
@@ -26,7 +50,10 @@ function generateSlide( pageObj, inCenter ){
     return (
     ` <div class="" id='page${pageObj.id}'>
         <div class="c-canvas__bcg-img" data-page="page${pageObj.id}" data-name="background">
-            <img src="${pageObj.background.src}" alt="">
+            <img src="${pageObj.background.src}"
+                 alt=""
+                 style="transform: translate(${pageObj.background.x * multiplayer}px)"
+            >
         </div>
         <div class="c-canvas__title ${dragableClass}"
              data-page="page${pageObj.id}"
@@ -77,15 +104,13 @@ module.exports = {
         sliderData.currentSlide = sliderData.count; //set current slide
         //console.log(sliderData.count);
 
-        //clone current slide to left position
-
-
-        //add new slide to GLOBAL data obj
+        // page object - will be added  to GLOBAL data
         let newSlide = {
             id:sliderData.count,
             background:{
                 toolForEdit:"editBcg",
                 src:"assets/img/placeholder.jpg",
+                x:'0'
             },
             //item on canvas
             title:{
@@ -129,7 +154,7 @@ module.exports = {
             generateSlide( newSlide, true )
         );
 
-        //add previously center slide to the left
+        //add previously center slide to the left if any
         if (sliderData.count > 1) {
             leftSlide.empty()
             .append(
@@ -144,8 +169,13 @@ module.exports = {
         slideshowDots.find('.current').removeClass('current');
         slideshowDots.append(`<span class='dot current'></span>`);
 
-        //increase curent slide display number
+        //change curent slide display number
         slideshowCount.text(sliderData.count);
+
+        //sync edit background image with current slide
+        updateEditBackgroundImage( data.pages[`page${sliderData.count}`].background );
+        //sync thumbnails
+        updateThumbnail( data.pages[`page${sliderData.currentSlide}`].background.src);
 
         console.log(data);
     },
@@ -193,6 +223,11 @@ module.exports = {
         }else{
             leftSlide.empty()
         }
+
+        //sync edit background image with current slide
+        updateEditBackgroundImage( data.pages[`page${sliderData.currentSlide}`].background);
+        //sync thumbnails
+        updateThumbnail( data.pages[`page${sliderData.currentSlide}`].background.src);
 
         //add dot
         slideshowDots.find('.current').removeClass('current').prev().addClass('current');
@@ -246,10 +281,14 @@ module.exports = {
             rightSlide.empty()
         }
 
+        //sync edit background image with current slide
+        updateEditBackgroundImage( data.pages[`page${sliderData.currentSlide}`].background );
+        //sync thumbnails
+        updateThumbnail( data.pages[`page${sliderData.currentSlide}`].background.src);
         //add dot
         slideshowDots.find('.current').removeClass('current').next().addClass('current');
 
-        //increase curent slide display number
+        //change curent slide display number
         slideshowCount.text(sliderData.currentSlide);
 
 

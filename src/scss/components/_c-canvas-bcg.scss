@@ -1,24 +1,44 @@
 .c-canvas-bcg{
 
     &__wrapper{
-        width: 83%;
-        max-height: 80vh;
+        width: 90%;
+        height: 64rem;
+        position: relative;
         overflow: hidden;
         margin: 0 auto;
         display: flex;
         align-items: center;
         justify-content: center;
+        background: rgba(255,255,255,0.4);
     }
 
     &__img{
+        height: 64rem;
         img{
-            height: 60vh;
+            height:100%;
             width: auto;
             max-width: none;
         }
     }
 
+    &__tint{
+        position: absolute;
+        width: calc( (100% - 36rem ) / 2 );
+        height: 64rem;
+        background: rgba(0,0,0,0.7);
+        z-index: 15;
+        &--left{
+            left:0;
+            top:0;
+        }
+        &--right{
+            top:0;
+            right:0;
+        }
+    }
+
     &__frame{
+        pointer-events: none;
         position:absolute;
         background:transparent;
         width: 36rem;
